@@ -1,24 +1,23 @@
 const express = require('express');
 const path = require('path');
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args)); // node-fetch v3
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable CORS
+app.use(cors());
+
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// Lookup endpoint with CORS
+// Lookup endpoint
 app.get('/lookup', async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
     const ip = req.query.ip;
     if (!ip) return res.status(400).json({ error: "IP address is required" });
 
     try {
-        // Use HTTPS here
         const response = await fetch(`https://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
         const data = await response.json();
 
