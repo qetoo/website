@@ -12,13 +12,16 @@ app.use(cors());
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// Lookup endpoint
+// Lookup endpoint using your proxy
 app.get('/lookup', async (req, res) => {
     const ip = req.query.ip;
     if (!ip) return res.status(400).json({ error: "IP address is required" });
 
     try {
-        const response = await fetch(`https://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
+        // Use your proxy URL
+        const proxyUrl = `https://proud-mode-8da6.moddy2232.workers.dev/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`;
+
+        const response = await fetch(proxyUrl);
         const data = await response.json();
 
         if (data.status === 'success') {
@@ -27,8 +30,8 @@ app.get('/lookup', async (req, res) => {
             res.status(400).json({ error: `Upstream IP API Error: ${data.message}` });
         }
     } catch (err) {
-        console.error("Error fetching IP details:", err);
-        res.status(500).json({ error: "Failed to fetch IP details" });
+        console.error("Error fetching IP details via proxy:", err);
+        res.status(500).json({ error: "Failed to fetch IP details via proxy" });
     }
 });
 
