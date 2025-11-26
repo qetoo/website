@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const fetch = require('node-fetch'); // you already have this installed
+const fetch = require('node-fetch');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// Lookup endpoint with manual CORS
+// Lookup endpoint with CORS
 app.get('/lookup', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
@@ -18,7 +18,8 @@ app.get('/lookup', async (req, res) => {
     if (!ip) return res.status(400).json({ error: "IP address is required" });
 
     try {
-        const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
+        // Use HTTPS here
+        const response = await fetch(`https://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
         const data = await response.json();
 
         if (data.status === 'success') {
