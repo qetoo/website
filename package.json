@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "A simple Node.js Express server to host the IP lookup application.",
   "main": "server.js",
-  "type": "commonjs",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-  "express": "^4.18.2",
-  "node-fetch": "^3.3.2",
-  "cors": "^2.8.5"
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
+    "cors": "^2.8.5"
+  }
 }
