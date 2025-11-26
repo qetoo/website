@@ -1,8 +1,12 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Enable CORS for all routes (so your HTML frontend can call /lookup)
+app.use(cors());
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
@@ -16,7 +20,6 @@ app.get('/lookup', async (req, res) => {
     }
 
     try {
-        // Use global fetch (Node 18+)
         const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
         const data = await response.json();
 
