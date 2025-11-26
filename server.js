@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const fetch = require('node-fetch');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,7 +16,7 @@ app.get('/lookup', async (req, res) => {
     }
 
     try {
-        // You can replace this API with any other service
+        // Built-in fetch (Node 18+)
         const response = await fetch(`https://ipapi.co/${ip}/json/`);
         const data = await response.json();
 
