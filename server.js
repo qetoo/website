@@ -1,41 +1,34 @@
 const express = require('express');
 const path = require('path');
+const fetch = require('node-fetch'); // Needed for API requests
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files (index.html, css, js)
+// Serve static files (index.html, etc.)
 app.use(express.static(path.join(__dirname)));
 
-app.get('/lookup', async (req, res) => {
-    const ip = req.query.ip;
-
-    if (!ip) {
-        return res.status(400).json({ error: "Missing IP address" });
-    }
+// Proxy endpoint to fetch IP geolocation
+app.get('/:ip', async (req, res) => {
+    const ip = req.params.ip;
 
     try {
-        // Fetch IP details from ipapi
-        const response = await fetch(`https://ipapi.co/${ip}/json/`, {
-            headers: {
-                "User-Agent": "Mozilla/5.0"
-            }
-        });
-
-        if (!response.ok) {
-            return res.status(500).json({ error: "Upstream IP API Error" });
-        }
-
+        // Using ip-api.com free endpoint
+        const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
         const data = await response.json();
-        res.json(data);
 
-    } catch (error) {
-        console.error("Lookup error:", error);
-        res.status(500).json({ error: "Failed to fetch IP details" });
+        if (data.status === 'success') {
+            res.json(data);
+        } else {
+            res.status(400).json({ error: `Upstream IP API Error: ${data.message}` });
+        }
+    } catch (err) {
+        console.error('Error fetching IP details:', err);
+        res.status(500).json({ error: 'Failed to fetch IP details' });
     }
 });
 
-// Start server
+// Start the server
 app.listen(PORT, () => {
-    console.log(`Web Service running on http://localhost:${PORT}`);
+    console.log(`Web Service is running on http://localhost:${PORT}`);
 });
