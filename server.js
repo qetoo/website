@@ -1,23 +1,21 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
+const fetch = require('node-fetch'); // you already have this installed
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all routes (so your HTML frontend can call /lookup)
-app.use(cors());
-
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// Lookup endpoint
+// Lookup endpoint with manual CORS
 app.get('/lookup', async (req, res) => {
-    const ip = req.query.ip;
+    res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!ip) {
-        return res.status(400).json({ error: "IP address is required" });
-    }
+    const ip = req.query.ip;
+    if (!ip) return res.status(400).json({ error: "IP address is required" });
 
     try {
         const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
