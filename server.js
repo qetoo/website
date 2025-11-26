@@ -1,5 +1,4 @@
 const express = require('express');
-const fetch = require('node-fetch'); // make sure you install it: npm install node-fetch
 const path = require('path');
 
 const app = express();
@@ -17,7 +16,7 @@ app.get('/lookup', async (req, res) => {
     }
 
     try {
-        // Use ip-api.com free API
+        // Use global fetch (Node 18+)
         const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,lat,lon,timezone,isp,query`);
         const data = await response.json();
 
